@@ -27,18 +27,18 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         self.view.addSubview(tableView)
         tableView.register(UITableViewCell.classForCoder(), forCellReuseIdentifier: CellIndentifier);
         
-        let book0 = Book.init(name: "我是Swift书", price: 23.6);
-        dataArr.append(book0)
-        dataArr.append(book0)
-        dataArr.append(book0)
-        dataArr.append(book0)
+        dataArr = self.initDatas();
         
         tableView.reloadData();
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func initDatas() -> [Book] {
+        var  tempArr = [Book]();
+        let nums = 1...5;
+        for _ in nums {
+        let book0 = Book.init(name: "我是一本Swift书", price: 23.6);
+            tempArr.append(book0)
+        }
+        return tempArr;
     }
 
     //MARK: tableView delegate
