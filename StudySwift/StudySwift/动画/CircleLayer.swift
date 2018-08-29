@@ -10,28 +10,47 @@ import UIKit
 
 class CircleLayer: CAShapeLayer {
     
+    var center: CGPoint = CGPoint.zero
+    var radius: CGFloat = 0
+    
+    let SquishLenght: CGFloat = 10.0
     let KAnimationDuration: CFTimeInterval = 0.3
     let KAnimationBeginTime: CFTimeInterval = 0.0
     
+    
+    var originalX:  CGFloat {
+        return center.x - radius
+    }
+    
+    var originalY:  CGFloat {
+        return center.y - radius
+    }
+    
     var beginPath: UIBezierPath {
-        return UIBezierPath(ovalIn: CGRect(x: 100, y: 100, width: 0, height: 0))
+        return UIBezierPath(ovalIn: CGRect(x: center.x, y: center.y, width: 0, height: 0))
     }
     
     var endFullPath: UIBezierPath {
-         return UIBezierPath.init(ovalIn: CGRect.init(x: 50, y: 50, width: 100, height: 100))
+        return UIBezierPath.init(ovalIn: CGRect.init(x: originalX, y: originalY, width: radius * 2, height: radius * 2))
     }
     
     var circleVerticalSquishPath: UIBezierPath {
-        return UIBezierPath.init(ovalIn: CGRect.init(x: 50, y: 60, width: 100, height: 80))
+        return UIBezierPath.init(ovalIn: CGRect.init(x: originalX, y: originalY + SquishLenght * 0.5, width: radius * 2, height: radius * 2 - SquishLenght))
     }
     
     var circleHorizontalSquishPath: UIBezierPath {
-        return UIBezierPath.init(ovalIn: CGRect.init(x: 60, y: 50, width: 80, height: 100))
+        return UIBezierPath.init(ovalIn: CGRect.init(x: originalX + SquishLenght * 0.5, y: originalY, width: radius * 2 - SquishLenght, height: radius * 2))
     }
     
     override init() {
         super.init()
         self.fillColor = UIColor.red.cgColor
+    }
+    
+    convenience init(center: CGPoint, radius: CGFloat) {
+        self.init()
+        self.center = center
+        self.radius = radius
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -47,6 +66,17 @@ class CircleLayer: CAShapeLayer {
         expandAnimation.isRemovedOnCompletion = false
         add(expandAnimation, forKey: "expand")
     }
+    
+    func contract() {
+        let contractAnimation: CABasicAnimation = CABasicAnimation(keyPath: "path")
+        contractAnimation.fromValue = endFullPath.cgPath
+        contractAnimation.toValue = beginPath.cgPath
+        contractAnimation.duration = KAnimationDuration
+        contractAnimation.fillMode = kCAFillModeForwards
+        contractAnimation.isRemovedOnCompletion = false
+        add(contractAnimation, forKey: nil)
+    }
+    
     
     func wobble() {
         let animation1 = CABasicAnimation.init(keyPath: "path")
